@@ -48,12 +48,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#f5f5f5', // Light background color for the screen
+        backgroundColor: '#272b33', 
     },
     heading: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 10, // Space below heading
+        color: 'white',
     },
     emptyMessage: {
         fontSize: 16,
