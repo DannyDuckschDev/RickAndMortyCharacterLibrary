@@ -27,7 +27,7 @@ export default function OverviewScreen({ navigation }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [numColumns, setNumColumns] = useState(getNumColumns());
 
-  const { likedCharacters, addCharacter, removeCharacter} = useLikedCharactersStore(); //Access liked characers from zustand store
+  const { likedCharacters, addCharacter, removeCharacter } = useLikedCharactersStore(); // Access liked characters from zustand store
 
   useEffect(() => {
     const handleResize = () => setNumColumns(getNumColumns());
@@ -50,12 +50,12 @@ export default function OverviewScreen({ navigation }: Props) {
       });
   }, []);
 
-  //Toogle like/unlike functionality
+  // Toggle like/unlike functionality
   const toggleLike = (character: Character) => {
     if (likedCharacters.some((char) => char.id === character.id)) {
-      removeCharacter(character.id); //If already liked, remove it
+      removeCharacter(character.id); // Remove if already liked
     } else {
-      addCharacter(character); // Otherwise, add the full characters data
+      addCharacter(character); // Add if not liked
     }
   };
 
@@ -70,49 +70,55 @@ export default function OverviewScreen({ navigation }: Props) {
       ) : (
         <FlatList
           data={characters}
-          key={numColumns} //Add key prop to force re-render on numColumns change
+          key={numColumns} // Add key prop to force re-render on numColumns change
           keyExtractor={(item) => item.id.toString()}
           numColumns={numColumns}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Image source={{ uri: item.image }} style={styles.image} />
-              <Text style={styles.name}>{item.name}</Text>
-              <View style={styles.statusContainer}>
-                <View
-                  style={[
-                    styles.statusDot,
-                    {
-                      backgroundColor:
-                        item.status === 'Alive' ? 'green' :
-                        item.status === 'Dead' ? 'red' : 'gray',
-                    },
-                  ]}
-                />
-                <Text style={styles.status}>{item.status}</Text>
-              </View>
-              <View style={styles.buttonContainer}>
-                {/*Like Button*/}
-                <TouchableOpacity 
-                  style={styles.likeButton} 
-                  onPress={() => toggleLike(item)}
-                >
-                  <Ionicons 
-                    name={likedCharacters.some((char) => char.id === item.id) ? "thumbs-up" : "thumbs-up-outline"} 
-                    size={21} 
-                    color="white" 
-                    style={styles.icon}
+          renderItem={({ item }) => {
+            const isLiked = likedCharacters.some((char) => char.id === item.id);
+            return (
+              <View style={styles.card}>
+                <Image source={{ uri: item.image }} style={styles.image} />
+                <Text style={styles.name}>{item.name}</Text>
+                <View style={styles.statusContainer}>
+                  <View
+                    style={[
+                      styles.statusDot,
+                      {
+                        backgroundColor:
+                          item.status === 'Alive' ? '#A8E063' :
+                          item.status === 'Dead' ? 'red' : 'gray',
+                      },
+                    ]}
                   />
-                </TouchableOpacity>
-                {/*Details Button*/}
-                <TouchableOpacity
-                  style={styles.detailsButton}
-                  onPress={() => navigation.navigate('Detail', { characterId: String(item.id) })}
-                >
-                  <Text style={styles.buttonText}>Details</Text>
-                </TouchableOpacity>
+                  <Text style={styles.status}>{item.status}</Text>
+                </View>
+                <View style={styles.buttonContainer}>
+                  {/* Like Button with conditional styling */}
+                  <TouchableOpacity 
+                    style={[
+                      styles.likeButton, 
+                      isLiked ? styles.liked : styles.unliked
+                    ]}
+                    onPress={() => toggleLike(item)}
+                  >
+                    <Ionicons 
+                      name="thumbs-up" 
+                      size={21} 
+                      color={isLiked ? 'lightgreen' : 'white'} 
+                      style={styles.icon}
+                    />
+                  </TouchableOpacity>
+                  {/* Details Button */}
+                  <TouchableOpacity
+                    style={styles.detailsButton}
+                    onPress={() => navigation.navigate('Detail', { characterId: String(item.id) })}
+                  >
+                    <Text style={styles.buttonText}>Details</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          )}
+            );
+          }}
         />
       )}
     </View>
@@ -187,12 +193,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   likeButton: {
-    backgroundColor: '#34C759',
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingVertical: 11,
     paddingHorizontal: 16,
     borderRadius: 5,
+    borderWidth: 1,
+  },
+  liked: {
+    backgroundColor: 'rgba(52, 199, 89, 0.3)', 
+    borderColor: 'rgba(52, 199, 89, 0.15)', 
+  },
+  unliked: {
+    borderColor: 'white',
+    borderWidth: 1,
   },
   detailsButton: {
     backgroundColor: '#007AFF',
