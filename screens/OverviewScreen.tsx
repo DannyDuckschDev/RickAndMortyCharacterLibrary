@@ -31,9 +31,7 @@ export default function OverviewScreen({ navigation }: Props) {
 
   useEffect(() => {
     const handleResize = () => setNumColumns(getNumColumns());
-
     const subscription = Dimensions.addEventListener('change', handleResize);
-
     return () => {
       subscription?.remove();
     };
@@ -53,11 +51,11 @@ export default function OverviewScreen({ navigation }: Props) {
   }, []);
 
   //Toogle like/unlike functionality
-  const toggleLike = (characterId: string) => {
-    if (likedCharacters.includes(characterId)) {
-      removeCharacter(characterId); //If already liked, remove it
+  const toggleLike = (character: Character) => {
+    if (likedCharacters.some((char) => char.id === character.id)) {
+      removeCharacter(character.id); //If already liked, remove it
     } else {
-      addCharacter(characterId); // Otherwise, add it to liked characters
+      addCharacter(character); // Otherwise, add the full characters data
     }
   };
 
@@ -96,10 +94,10 @@ export default function OverviewScreen({ navigation }: Props) {
                 {/*Like Button*/}
                 <TouchableOpacity 
                   style={styles.likeButton} 
-                  onPress={() => toggleLike(item.id.toString())}
+                  onPress={() => toggleLike(item)}
                 >
                   <Ionicons 
-                    name={likedCharacters.includes(item.id.toString()) ? "thumbs-up" : "thumbs-up-outline"} 
+                    name={likedCharacters.some((char) => char.id === item.id) ? "thumbs-up" : "thumbs-up-outline"} 
                     size={21} 
                     color="white" 
                     style={styles.icon}
